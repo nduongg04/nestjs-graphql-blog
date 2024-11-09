@@ -30,7 +30,7 @@ A modern blog API built with NestJS, GraphQL, Prisma, and PostgreSQL. This proje
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/nduongg04/nestjs-graphql-blog.git
 cd nestjs-graphql-blog
 ```
 
