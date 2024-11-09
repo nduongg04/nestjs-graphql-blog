@@ -1,73 +1,132 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NestJS GraphQL Blog API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A modern blog API built with NestJS, GraphQL, Prisma, and PostgreSQL. This project implements a fully-featured blog system with users, posts, and comments functionality.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 🚀 GraphQL API with Apollo Server
+- 📱 Type-safe database access with Prisma ORM
+- 🔐 User management system
+- 📝 Blog posts with CRUD operations
+- 💬 Comments system
+- ✨ Input validation
+- 🔄 Real-time updates (coming soon)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Installation
+- [NestJS](https://nestjs.com/) - A progressive Node.js framework
+- [GraphQL](https://graphql.org/) - A query language for APIs
+- [Prisma](https://www.prisma.io/) - Next-generation ORM for Node.js
+- [PostgreSQL](https://www.postgresql.org/) - Open source relational database
+- [TypeScript](https://www.typescriptlang.org/) - JavaScript with syntax for types
 
+## Prerequisites
+
+- Node.js (v14 or higher)
+- PostgreSQL
+- npm or yarn
+
+## Getting Started
+
+1. Clone the repository:
 ```bash
-$ npm install
+git clone <repository-url>
+cd nestjs-graphql-blog
 ```
 
-## Running the app
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up your environment variables:
+Create a `.env` file in the root directory and add:
+```
+DATABASE_URL="postgresql://username:password@localhost:5432/blog_db"
+PORT=3000
+```
+
+4. Run database migrations:
+```bash
+npx prisma migrate dev
+```
+
+5. Start the development server:
+```bash
+npm run start:dev
+```
+
+The GraphQL playground will be available at: `http://localhost:3000/graphql`
+
+## Available Scripts
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
 # production mode
-$ npm run start:prod
-```
+npm run start:prod
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
+# run tests
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
-## Support
+## API Structure
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Models
+- User
+- Post
+- Comment
 
-## Stay in touch
+### Operations
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### Queries
+- `users`: Get all users
+- `user(id: Int!)`: Get a specific user
+- `posts`: Get all posts
+- `post(id: Int!)`: Get a specific post
+- `comments`: Get all comments
+- `comment(id: Int!)`: Get a specific comment
+
+#### Mutations
+- Users:
+  - `createUser`
+  - `updateUser`
+  - `removeUser`
+- Posts:
+  - `createPost`
+  - `updatePost`
+  - `removePost`
+- Comments:
+  - `createComment`
+  - `updateComment`
+  - `removeComment`
+
+## Project Structure
+
+The project follows a modular architecture with separate modules for users, posts, and comments. Each module contains its own resolvers, services, and DTOs.
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+This project is MIT licensed.
+
+## Support
+
+For support, email [your-email] or join our Discord channel.
