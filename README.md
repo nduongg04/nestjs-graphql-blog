@@ -129,4 +129,4 @@ This project is MIT licensed.
 
 ## Support
 
-For support, email [your-email] or join our Discord channel.
+For support, email `nduongg04@gmail.com`.
