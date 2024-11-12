@@ -43,6 +43,7 @@ jobs:
       - name: Restart application on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+            source /etc/app.env
             sudo systemctl daemon-reload
             sudo systemctl restart myapp.service
           EOF
