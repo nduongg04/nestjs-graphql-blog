@@ -32,7 +32,6 @@ jobs:
       - name: Set up environment file
         run: |
           ssh -tt -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
-            # Use tee to write the environment file with sudo permissions
             echo "$ENV_FILE_CONTENT" | sudo tee /etc/app.env > /dev/null 
             sudo chmod 600 /etc/app.env
             sudo chown ${EC2_USER}:${EC2_USER} /etc/app.env
