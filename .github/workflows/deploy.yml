@@ -31,17 +31,13 @@ jobs:
 
       - name: Set up environment file
         run: |
-          ssh -tt -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
-            echo "$ENV_FILE_CONTENT" | sudo tee /etc/app.env > /dev/null 
-            sudo chmod 600 /etc/app.env
-            sudo chown ${EC2_USER}:${EC2_USER} /etc/app.env
-          EOF
+          echo -e "$ENV_FILE_CONTENT" | ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} 'sudo tee /etc/app.env > /dev/null && sudo chmod 600 /etc/app.env && sudo chown ${EC2_USER}:${EC2_USER} /etc/app.env'
         env:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
 
       - name: Install dependencies and build app
         run: |
-          ssh -tt -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             cd /home/${EC2_USER}/app
             source /etc/app.env
             npm install          # Installs dependencies
@@ -50,7 +46,7 @@ jobs:
 
       - name: Restart application on EC2
         run: |
-          ssh -tt -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             source /etc/app.env
             sudo systemctl daemon-reload
             sudo systemctl restart myapp.service
