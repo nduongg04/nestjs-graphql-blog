@@ -41,7 +41,7 @@ jobs:
             # Use tee to write the environment file with sudo permissions
             echo "$ENV_FILE_CONTENT" | sudo tee /etc/app.env > /dev/null 
             sudo chmod 600 /etc/app.env
-            sudo chown root:root /etc/app.env
+            sudo chown ${EC2_USER}:${EC2_USER} /etc/app.env
           EOF
         env:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
