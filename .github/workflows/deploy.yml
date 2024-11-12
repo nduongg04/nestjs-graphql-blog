@@ -1,0 +1,48 @@
+name: CI/CD Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # Deploy on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Sync files to EC2
+        run: |
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app
+
+      - name: Set up environment file
+        run: |
+          ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+            # Use tee to write the environment file with sudo permissions
+            echo "$ENV_FILE_CONTENT" | sudo tee /etc/app.env > /dev/null 
+            sudo chmod 600 /etc/app.env
+            sudo chown root:root /etc/app.env
+          EOF
+        env:
+          ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+
+      - name: Restart application on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+            sudo systemctl daemon-reload
+            sudo systemctl restart myapp.service
+          EOF

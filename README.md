@@ -29,29 +29,34 @@ A modern blog API built with NestJS, GraphQL, Prisma, and PostgreSQL. This proje
 ## Getting Started
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd nestjs-graphql-blog
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up your environment variables:
-Create a `.env` file in the root directory and add:
+   Create a `.env` file in the root directory and add:
+
 ```
 DATABASE_URL="postgresql://username:password@localhost:5432/blog_db"
 PORT=3000
 ```
 
 4. Run database migrations:
+
 ```bash
 npx prisma migrate dev
 ```
 
 5. Start the development server:
+
 ```bash
 npm run start:dev
 ```
@@ -83,6 +88,7 @@ npm run test:cov
 ## API Structure
 
 ### Models
+
 - User
 - Post
 - Comment
@@ -90,6 +96,7 @@ npm run test:cov
 ### Operations
 
 #### Queries
+
 - `users`: Get all users
 - `user(id: Int!)`: Get a specific user
 - `posts`: Get all posts
@@ -98,6 +105,7 @@ npm run test:cov
 - `comment(id: Int!)`: Get a specific comment
 
 #### Mutations
+
 - Users:
   - `createUser`
   - `updateUser`
