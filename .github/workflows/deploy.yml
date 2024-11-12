@@ -20,18 +20,18 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key.pem
+          chmod 600 ~/.ssh/private_key.pem
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Sync files to EC2
         run: |
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app
+          rsync -avz -e "ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no" ./ ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app
 
       - name: Set up environment file
         run: |
-          ssh -tt -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -tt -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             # Use tee to write the environment file with sudo permissions
             echo "$ENV_FILE_CONTENT" | sudo tee /etc/app.env > /dev/null 
             sudo chmod 600 /etc/app.env
@@ -42,7 +42,7 @@ jobs:
 
       - name: Install dependencies and build app
         run: |
-          ssh -tt -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -tt -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             cd /home/${EC2_USER}/app
             source /etc/app.env
             npm install          # Installs dependencies
@@ -51,7 +51,7 @@ jobs:
 
       - name: Restart application on EC2
         run: |
-          ssh -tt -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -tt -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             source /etc/app.env
             sudo systemctl daemon-reload
             sudo systemctl restart myapp.service
