@@ -27,7 +27,7 @@ jobs:
 
       - name: Sync files to EC2
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app
 
       - name: Set up environment file
         run: |
