@@ -29,15 +29,9 @@ jobs:
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app
 
-      - name: Debug ENV_FILE_CONTENT
-        run: |
-          echo "$ENV_FILE_CONTENT"
-        env:
-          ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
-
       - name: Set up environment file
         run: |
-          ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -tt -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             # Use tee to write the environment file with sudo permissions
             echo "$ENV_FILE_CONTENT" | sudo tee /etc/app.env > /dev/null 
             sudo chmod 600 /etc/app.env
@@ -48,7 +42,7 @@ jobs:
 
       - name: Restart application on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -tt -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
             source /etc/app.env
             sudo systemctl daemon-reload
             sudo systemctl restart myapp.service
