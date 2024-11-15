@@ -17,14 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install rsync
-        run: |
-          apt update && apt install -y sudo && sudo apt install -y rsync
-
-      - name: Install ssh
-        run: |
-          apt update && apt install -y sudo && sudo apt install -y ssh
-
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
@@ -33,10 +25,6 @@ jobs:
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # - name: Test SSH connection
-      #   run: |
-      #     ssh -o "StrictHostKeyChecking=accept-new" -i ~/.ssh/private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}
 
       - name: Sync files to EC2
         run: |
