@@ -17,36 +17,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Install rsync
+        run: |
+          apt update && apt install -y sudo && sudo apt install -y rsync
+
+      - name: Install ssh
+        run: |
+          apt update && apt install -y sudo && sudo apt install -y ssh
+
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/private_key.pem
           chmod 600 ~/.ssh/private_key.pem
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      # - name: Test SSH connection
+      #   run: |
+      #     ssh -o "StrictHostKeyChecking=accept-new" -i ~/.ssh/private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}
+
       - name: Sync files to EC2
         run: |
-          rsync -avz -e "ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no" ./ ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app
+          rsync -avz --exclude 'node_modules' --exclude '.git' --exclude '.env*' -e "ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/private_key.pem" ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/app
 
       - name: Set up environment file
         run: |
-          echo -e "$ENV_FILE_CONTENT" | ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} 'sudo tee /etc/app.env > /dev/null && sudo chmod 600 /etc/app.env && sudo chown ${EC2_USER}:${EC2_USER} /etc/app.env'
+          echo -e "$ENV_FILE_CONTENT" | ssh -o "StrictHostKeyChecking=accept-new" -i ~/.ssh/private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo tee /etc/app.env > /dev/null && sudo chmod 600 /etc/app.env && sudo chown ${EC2_USER}:${EC2_USER} /etc/app.env'
         env:
           ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
 
       - name: Install dependencies and build app
         run: |
-          ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
-            cd /home/${EC2_USER}/app
+          ssh -o "StrictHostKeyChecking=accept-new" -i ~/.ssh/private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            cd /home/${{ secrets.EC2_USER }}/app
             source /etc/app.env
-            npm install          # Installs dependencies
-            npm run build        # Builds the project
+            npm install
+            npm run build
           EOF
 
       - name: Restart application on EC2
         run: |
-          ssh -i ~/.ssh/private_key.pem -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          ssh -o "StrictHostKeyChecking=accept-new" -i ~/.ssh/private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
             source /etc/app.env
             sudo systemctl daemon-reload
             sudo systemctl restart myapp.service
