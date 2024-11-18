@@ -1,6 +1,9 @@
 # NestJS GraphQL Blog API
 
 A modern blog API built with NestJS, GraphQL, Prisma, and PostgreSQL. This project implements a fully-featured blog system with users, posts, and comments functionality.
+<p align="center" style="font-size: 20px">
+	<a href="https://nestjs-graphql-blog.duong.website/graphql">Demo</a>
+</p>
 
 ## Features
 
